@@ -45,7 +45,7 @@
         "kwargs": {
             "method": "mixup"
         },
-        "module": "defenses.augmentation",
+        "module": "my_defenses.augmentation",
         "name": "Augmentation",
         "type": "Preprocessor"
     },
@@ -54,7 +54,7 @@
         "fit": true,
         "fit_kwargs": {},
         "model_kwargs": {},
-        "module": "cnn_poison_pytorch_r2",
+        "module": "my_models.cnn_poison_pytorch_r2",
         "name": "get_art_model",
         "weights_file": null,
         "wrapper_kwargs": {}
