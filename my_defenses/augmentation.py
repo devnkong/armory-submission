@@ -33,7 +33,7 @@ def cutmix(inputs, targets, cutmix_prob = 1.0, beta = 1.0):
         # adjust lambda to exactly match pixel ratio
         lam = 1 - ((bbx2 - bbx1) * (bby2 - bby1) / (inputs.size()[-1] * inputs.size()[-2]))
 
-        mixed_target = lam * F.one_hot(targets) + (1 - lam) * F.one_hot(targets[rand_index])
+        mixed_target = lam * F.one_hot(targets, num_classes=43) + (1 - lam) * F.one_hot(targets[rand_index], num_classes=43)
 
     return inputs, mixed_target
 
@@ -51,7 +51,7 @@ def cutmix_fixed(inputs, targets, cutmix_prob = 1.0, beta = 1.0):
         # adjust lambda to exactly match pixel ratio
         lam = 1 - ((bbx2 - bbx1) * (bby2 - bby1) / (inputs.size()[-1] * inputs.size()[-2]))
 
-    return inputs, F.one_hot(target_a)
+    return inputs, F.one_hot(target_a, num_classes=43)
 
 
 
@@ -66,7 +66,7 @@ def mixup(inputs, targets, alpha=1.0):
     batch_size = inputs.size()[0]
     index = torch.randperm(batch_size).cuda()
     mixed_input = lam * inputs + (1 - lam) * inputs[index, :]
-    mixed_target = lam * F.one_hot(targets) + (1 - lam) * F.one_hot(targets[index])
+    mixed_target = lam * F.one_hot(targets, num_classes=43) + (1 - lam) * F.one_hot(targets[index], num_classes=43)
 
     return mixed_input, mixed_target
 

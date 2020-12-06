@@ -48,7 +48,7 @@ def make_gtsrb_model(**kwargs) -> Net:
     return Net()
 
 def cross_entropy(outputs_x, targets_x) :
-    return -torch.mean(torch.sum(F.log_softmax(outputs_x, dim=1) * targets_x, dim=1))
+    return -torch.mean(torch.sum(outputs_x * targets_x, dim=1))
 
 def get_art_model(
     model_kwargs: dict, wrapper_kwargs: dict, weights_path: Optional[str] = None
