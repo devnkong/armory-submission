@@ -4,8 +4,8 @@ import torch
 import torch.nn.functional as F
 
 def rand_bbox(size, lam):
-    W = size[2]
-    H = size[3]
+    W = size[1]
+    H = size[2]
     cut_rat = np.sqrt(1. - lam)
     cut_w = np.int(W * cut_rat)
     cut_h = np.int(H * cut_rat)
@@ -31,7 +31,7 @@ def cutmix(inputs, targets, cutmix_prob = 1.0, beta = 1.0):
         target_a = targets
         target_b = targets[rand_index]
         bbx1, bby1, bbx2, bby2 = rand_bbox(inputs.size(), lam)
-        inputs[:, :, bbx1:bbx2, bby1:bby2] = inputs[rand_index, :, bbx1:bbx2, bby1:bby2]
+        inputs[:, bbx1:bbx2, bby1:bby2, :] = inputs[rand_index, bbx1:bbx2, bby1:bby2, :]
         # adjust lambda to exactly match pixel ratio
         lam = 1 - ((bbx2 - bbx1) * (bby2 - bby1) / (inputs.size()[-1] * inputs.size()[-2]))
 
@@ -51,7 +51,7 @@ def cutmix_fixed(inputs, targets, cutmix_prob = 1.0, beta = 1.0):
         target_a = targets
         target_b = targets[rand_index]
         bbx1, bby1, bbx2, bby2 = rand_bbox(inputs.size(), lam)
-        inputs[:, :, bbx1:bbx2, bby1:bby2] = inputs[rand_index, :, bbx1:bbx2, bby1:bby2]
+        inputs[:, bbx1:bbx2, bby1:bby2, :] = inputs[rand_index, bbx1:bbx2, bby1:bby2, :]
         # adjust lambda to exactly match pixel ratio
         lam = 1 - ((bbx2 - bbx1) * (bby2 - bby1) / (inputs.size()[-1] * inputs.size()[-2]))
 
