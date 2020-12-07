@@ -1,4 +1,4 @@
-from art.defences.preprocessor import PreprocessorPyTorch
+# from art.defences.preprocessor import PreprocessorPyTorch
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -23,6 +23,8 @@ def rand_bbox(size, lam):
 def cutmix(inputs, targets, cutmix_prob = 1.0, beta = 1.0):
     r = np.random.rand(1)
     if beta > 0 and r < cutmix_prob:
+        inputs = torch.tensor(inputs)
+        targets = torch.tensor(targets)
         # generate mixed sample
         lam = np.random.beta(beta, beta)
         rand_index = torch.randperm(inputs.size()[0]).cuda()
@@ -34,6 +36,11 @@ def cutmix(inputs, targets, cutmix_prob = 1.0, beta = 1.0):
         lam = 1 - ((bbx2 - bbx1) * (bby2 - bby1) / (inputs.size()[-1] * inputs.size()[-2]))
 
         mixed_target = lam * F.one_hot(targets) + (1 - lam) * F.one_hot(targets[rand_index])
+        inputs = inputs.cpu().numpy()
+        mixed_target = mixed_target.cpu().numpy()
+        print('cutmix')
+        print('cutmix')
+        print('cutmix')
 
     return inputs, mixed_target
 
@@ -63,20 +70,25 @@ def mixup(inputs, targets, alpha=1.0):
     else:
         lam = 1
 
+    inputs = torch.tensor(inputs)
+    targets = torch.tensor(targets)
     batch_size = inputs.size()[0]
     index = torch.randperm(batch_size).cuda()
     mixed_input = lam * inputs + (1 - lam) * inputs[index, :]
     mixed_target = lam * F.one_hot(targets) + (1 - lam) * F.one_hot(targets[index])
+    mixed_input = mixed_input.cpu().numpy()
+    mixed_target = mixed_target.cpu().numpy()
 
     return mixed_input, mixed_target
 
 
-class Augmentation(PreprocessorPyTorch):
+class Augmentation:
 
     def __init__(self, method):
         self.method = method
+        print(self.method)
 
-    def forward(self, x, y):
+    def __call__(self, x, y):
         if self.method == 'mixup' :
             x, y = mixup(x,y)
         elif self.method == 'cutmix' :
