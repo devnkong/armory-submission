@@ -60,7 +60,7 @@ def get_art_model(
         model,
         # loss=nn.CrossEntropyLoss(),
         loss=cross_entropy,
-        optimizer=torch.optim.Adam(model.parameters(), lr=0.01),
+        optimizer=torch.optim.Adam(model.parameters(), lr=0.003),
         input_shape=(48, 48, 3),
         nb_classes=43,
         clip_values=(0.0, 1.0),
