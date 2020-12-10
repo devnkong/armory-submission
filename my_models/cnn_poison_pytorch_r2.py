@@ -48,11 +48,8 @@ def make_gtsrb_model(**kwargs) -> Net:
     return Net()
 
 def cross_entropy(outputs_x, targets_x) :
-<<<<<<< HEAD
     # print('-------------------')
     # exit(-1)
-=======
->>>>>>> 620a8541566afbb8a4211e31616ab1a61e45a34a
     return -torch.mean(torch.sum(outputs_x * targets_x, dim=1))
 
 def get_art_model(
@@ -65,7 +62,7 @@ def get_art_model(
         model,
         # loss=nn.CrossEntropyLoss(),
         loss=cross_entropy,
-        optimizer=torch.optim.Adam(model.parameters(), lr=0.003),
+        optimizer=torch.optim.Adam(model.parameters(), lr=0.005),
         input_shape=(48, 48, 3),
         nb_classes=43,
         clip_values=(0.0, 1.0),

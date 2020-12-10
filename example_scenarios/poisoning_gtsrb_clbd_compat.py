@@ -196,7 +196,6 @@ class GTSRB_CLBD(Scenario):
                 attack_config["kwargs"]["proxy_classifier"] = proxy_classifier
 
             attack, backdoor = load(attack_config)
-
             x_train_all, y_train_all_categorical = attack.poison(
                 x_train_all, y_train_all_categorical
             )

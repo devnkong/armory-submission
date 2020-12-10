@@ -33,7 +33,7 @@ def cutmix(inputs, targets, cutmix_prob = 1.0, beta = 1.0):
         bbx1, bby1, bbx2, bby2 = rand_bbox(inputs.size(), lam)
         inputs[:, bbx1:bbx2, bby1:bby2, :] = inputs[rand_index, bbx1:bbx2, bby1:bby2, :]
         # adjust lambda to exactly match pixel ratio
-        lam = 1 - ((bbx2 - bbx1) * (bby2 - bby1) / (inputs.size()[-1] * inputs.size()[-2]))
+        lam = 1 - ((bbx2 - bbx1) * (bby2 - bby1) / (inputs.size()[-2] * inputs.size()[-3]))
 
         mixed_target = lam * F.one_hot(targets, num_classes=43) + (1 - lam) * F.one_hot(targets[rand_index], num_classes=43)
         inputs = inputs.cpu().numpy()
@@ -53,7 +53,7 @@ def cutmix_fixed(inputs, targets, cutmix_prob = 1.0, beta = 1.0):
         bbx1, bby1, bbx2, bby2 = rand_bbox(inputs.size(), lam)
         inputs[:, bbx1:bbx2, bby1:bby2, :] = inputs[rand_index, bbx1:bbx2, bby1:bby2, :]
         # adjust lambda to exactly match pixel ratio
-        lam = 1 - ((bbx2 - bbx1) * (bby2 - bby1) / (inputs.size()[-1] * inputs.size()[-2]))
+        lam = 1 - ((bbx2 - bbx1) * (bby2 - bby1) / (inputs.size()[-2] * inputs.size()[-3]))
 
     return inputs, F.one_hot(target_a, num_classes=43)
 
