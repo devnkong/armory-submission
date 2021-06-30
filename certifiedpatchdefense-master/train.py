@@ -157,6 +157,11 @@ def Train(model, model_id, t, loader, start_eps, end_eps, max_eps, norm, logger,
             elif len(loader.std) == 3:
                 std = torch.tensor(loader.std, dtype=torch.float)[None, :, None, None]
                 mean = torch.tensor(loader.mean, dtype=torch.float)[None, :, None, None]
+            elif len(loader.std) == 14:
+                std = torch.tensor(loader.std, dtype=torch.float)[None, :, None, None]
+                mean = torch.tensor(loader.mean, dtype=torch.float)[None, :, None, None]
+            else :
+                raise ValueError('loader shape wrong')
             if kwargs["bound_type"] == "sparse-interval":
                 data_ub = data
                 data_lb = data
@@ -598,14 +603,15 @@ def main(args):
             # err, clean_err = 0, 0
 
             logger.log('saving to', model_name)
-            torch.save({
-                    'state_dict' : model.state_dict(),
-                    'opt_state_dict': opt.state_dict(),
-                    'robust_err': err,
-                    'clean_err': clean_err,
-                    'epoch' : t,
-                    'lr_scheduler_dict': lr_scheduler.state_dict()
-                    }, model_name)
+            # torch.save({
+            #         'state_dict' : model.state_dict(),
+            #         'opt_state_dict': opt.state_dict(),
+            #         'robust_err': err,
+            #         'clean_err': clean_err,
+            #         'epoch' : t,
+            #         'lr_scheduler_dict': lr_scheduler.state_dict()
+            #         }, model_name)
+            torch.save(model.state_dict(), model_name)
 
             # save the best model after we reached the schedule
             if t >= len(eps_schedule):

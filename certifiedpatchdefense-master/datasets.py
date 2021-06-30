@@ -108,8 +108,8 @@ def cifar_loaders(batch_size, shuffle_train = True, shuffle_test = False, train_
 def so2sat_loaders(batch_size, shuffle_train=True, shuffle_test=False, train_random_transform=False,
                   normalize_input=False, num_examples=None, test_batch_size=None):
 
-    train_loader = armory_datasets.so2sat(split='train',epochs=1,batch_size=8192)
-    test_loader = armory_datasets.so2sat(split='validation',epochs=1,batch_size=8192)
+    train_loader = armory_datasets.so2sat(split='train',epochs=1,batch_size=1024)
+    test_loader = armory_datasets.so2sat(split='validation',epochs=1,batch_size=1024)
 
     train_loader.std = [1.]*14
     test_loader.std = [1.]*14

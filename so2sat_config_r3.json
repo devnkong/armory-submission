@@ -30,53 +30,7 @@
         "module": "armory.data.datasets",
         "name": "so2sat"
     },
-    "defense": {
-        "kwargs": {
-            "apply_fit": false,
-            "apply_predict": true,
-            "channels_first": false,
-            "clip_values": [
-                0.0,
-                1.0
-            ],
-            "mins": [
-                -1.0,
-                -1.0,
-                -1.0,
-                -1.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0
-            ],
-            "quality": 95,
-            "ranges": [
-                2.0,
-                2.0,
-                2.0,
-                2.0,
-                1.0,
-                1.0,
-                1.0,
-                1.0,
-                1.0,
-                1.0,
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ]
-        },
-        "module": "armory.art_experimental.defences.jpeg_compression_multichannel_image",
-        "name": "JpegCompressionMultiChannelImage",
-        "type": "Preprocessor"
-    },
+    "defense": {},
     "metric": {
         "means": true,
         "perturbation": "l0",
@@ -87,55 +41,17 @@
     },
     "model": {
         "fit": false,
-        "fit_kwargs": {
-            "nb_epochs": 20
-        },
         "model_kwargs": {},
-        "module": "armory.baseline_models.keras.so2sat",
+        "wrapper_kwargs": {},
+        "module": "my_models.cnn_so2sat_r3",
         "name": "get_art_model",
-        "weights_file": "multimodal_baseline_weights.h5",
-        "wrapper_kwargs": {
-            "clip_values": [
-                [
-                    -1,
-                    -1,
-                    -1,
-                    -1,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0
-                ],
-                [
-                    1,
-                    1,
-                    1,
-                    1,
-                    1,
-                    1,
-                    1,
-                    1,
-                    1,
-                    1,
-                    1,
-                    1,
-                    1,
-                    1
-                ]
-            ]
-        }
+        "weights_path": "cnn_so2sat.pth"
     },
     "scenario": {
         "kwargs": {
             "attack_modality": "sar"
         },
-        "module": "custom_scenarios.multimodal_so2sat_scenarioj_r3",
+        "module": "armory.scenarios.multimodal_so2sat_scenario",
         "name": "So2SatClassification"
     },
     "sysconfig": {
