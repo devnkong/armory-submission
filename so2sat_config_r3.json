@@ -30,7 +30,7 @@
         "module": "armory.data.datasets",
         "name": "so2sat"
     },
-    "defense": {},
+    "defense": null,
     "metric": {
         "means": true,
         "perturbation": "l0",
@@ -41,11 +41,12 @@
     },
     "model": {
         "fit": false,
+        "fit_kwargs": {},
         "model_kwargs": {},
         "wrapper_kwargs": {},
         "module": "my_models.cnn_so2sat_r3",
         "name": "get_art_model",
-        "weights_path": "cnn_so2sat.pth"
+        "weights_file": "cnn_so2sat.pth"
     },
     "scenario": {
         "kwargs": {

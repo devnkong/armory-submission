@@ -96,6 +96,7 @@ def so2sat_model_cnn_2layer(in_ch, in_dim, width, linear_size=128):
     )
     return model
 
+
 # CNN, relatively small 3-layer
 # parameter in_ch: input image channel, 1 for MNIST and 3 for CIFAR
 # parameter in_dim: input dimension, 28 for MNIST and 32 for CIFAR
