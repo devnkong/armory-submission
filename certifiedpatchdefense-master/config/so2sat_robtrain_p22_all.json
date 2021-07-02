@@ -3,7 +3,7 @@
     "dataset": "so2sat",
     "log_suffix": "",
     "path_prefix": "",
-    "models_path": "./results//so2sat_robtrain_p22_rand10",
+    "models_path": "./results/so2sat_robtrain_p22_all/",
     "training_params": {
         "method": "robust",
         "epochs": 20,
@@ -16,9 +16,8 @@
         "optimizer": "adam",
         "verbose": false,
         "loader_params": {"batch_size": 256, "test_batch_size": 256, "shuffle_train": true, "train_random_transform": true, "normalize_input": true},
-        "method_params": {"attack_type": "patch-random", "bound_type": "patch-interval",
-            "patch_w": 2, "patch_l": 2, "patch_count": 10,
-            "epsilon": 1}
+        "method_params": {"attack_type": "patch-all", "bound_type": "patch-interval",
+            "patch_w": 2, "patch_l": 2, "epsilon": 1}
     },
     "eval_params": {
         "method": "robust",

@@ -11,7 +11,7 @@ import torch
 from torch.nn import Sequential, Linear, ReLU, CrossEntropyLoss
 import numpy as np
 from datasets import loaders
-from model_defs import Flatten, model_mlp_any, model_cnn_1layer, model_cnn_2layer, model_cnn_4layer, model_cnn_3layer
+from model_defs import Flatten, model_mlp_any, model_cnn_1layer, model_cnn_2layer, model_cnn_4layer, model_cnn_3layer, so2sat_model_cnn_2layer
 from bound_layers import BoundSequential
 import torch.optim as optim
 # from gpu_profile import gpu_profile
@@ -28,8 +28,8 @@ from train import Train, Logger
 def main(args):
     config = load_config(args)
     global_eval_config = config["eval_params"]
-    models, model_names = config_modelloader(config, load_pretrain = True)
 
+    models, model_names = config_modelloader(config, load_pretrain = True)
     converted_models = [BoundSequential.convert(model) for model in models]
 
     robust_errs = []
@@ -59,6 +59,10 @@ def main(args):
             
         logger.log("Evaluating...")
         # evaluate
+
+        import pdb
+        pdb.set_trace()
+
         robust_err, err = Train(model, model_id, 0, test_data, eps, eps, eps, norm, logger, verbose, False, None, method, **method_param)
         robust_errs.append(robust_err)
         errs.append(err)

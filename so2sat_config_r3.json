@@ -24,7 +24,7 @@
         "use_label": true
     },
     "dataset": {
-        "batch_size": 8,
+        "batch_size": 1024,
         "eval_split": "validation",
         "framework": "numpy",
         "module": "armory.data.datasets",
@@ -61,6 +61,6 @@
         "gpus": "all",
         "output_dir": null,
         "output_filename": null,
-        "use_gpu": false
+        "use_gpu": true
     }
 }

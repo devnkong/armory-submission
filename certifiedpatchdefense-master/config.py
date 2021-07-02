@@ -171,6 +171,8 @@ def config_modelloader(config, load_pretrain = False, cuda = False):
             checkpoint = torch.load(model_file)
             if isinstance(checkpoint['state_dict'], list):
                 checkpoint['state_dict'] = checkpoint['state_dict'][0]
+
+
             new_state_dict = {}
             for k in checkpoint['state_dict'].keys():
                 if "prev" in k:
