@@ -56,7 +56,7 @@ def Net():
     ReLU = nn.ReLU()
 
     return nn.Sequential(
-        Permute(),
+        # Permute(),
         conv1,
         conv1_bn,
         ReLU,

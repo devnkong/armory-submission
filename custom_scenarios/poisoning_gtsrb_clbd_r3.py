@@ -11,6 +11,7 @@ import random
 from copy import deepcopy
 
 import numpy as np
+import pickle
 
 try:
     from tensorflow import set_random_seed, ConfigProto, Session
@@ -64,7 +65,7 @@ def poison_scenario_preprocessing(batch):
 
         img_out.append(img_eq)
 
-    return np.array(img_out, dtype=np.float32)
+    return np.transpose(np.array(img_out, dtype=np.float32), (0,3,1,2))
 
 
 def poison_dataset(src_imgs, src_lbls, src, tgt, ds_size, attack, poisoned_indices):
@@ -247,6 +248,16 @@ class GTSRB_CLBD(Scenario):
                 verbose=False,
                 shuffle=True,
             )
+
+            # logger.info(
+            #     f"Saving poisoned dataset to train offline"
+            # )
+            # with open('poisoned.pkl', 'wb') as f :
+            #     pickle.dump([x_train_final, y_train_final], f)
+            # exit()
+
+
+
         else:
             logger.warning("All data points filtered by defense. Skipping training")
 

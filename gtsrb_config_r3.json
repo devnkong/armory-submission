@@ -54,7 +54,7 @@
     },
     "scenario": {
         "kwargs": {},
-        "module": "armory.scenarios.poisoning_gtsrb_clbd",
+        "module": "custom_scenarios.poisoning_gtsrb_clbd_r3",
         "name": "GTSRB_CLBD"
     },
     "sysconfig": {
