@@ -237,24 +237,24 @@ class GTSRB_CLBD(Scenario):
             x_train_final = x_train_all
             y_train_final = y_train_all
         if len(x_train_final):
-            logger.info(
-                f"Fitting model of {model_config['module']}.{model_config['name']}..."
-            )
-            classifier.fit(
-                x_train_final,
-                y_train_final,
-                batch_size=fit_batch_size,
-                nb_epochs=train_epochs,
-                verbose=False,
-                shuffle=True,
-            )
-
             # logger.info(
-            #     f"Saving poisoned dataset to train offline"
+            #     f"Fitting model of {model_config['module']}.{model_config['name']}..."
             # )
-            # with open('poisoned.pkl', 'wb') as f :
-            #     pickle.dump([x_train_final, y_train_final], f)
-            # exit()
+            # classifier.fit(
+            #     x_train_final,
+            #     y_train_final,
+            #     batch_size=fit_batch_size,
+            #     nb_epochs=train_epochs,
+            #     verbose=False,
+            #     shuffle=True,
+            # )
+
+            logger.info(
+                f"Saving poisoned dataset to train offline"
+            )
+            with open('poisoned.pkl', 'wb') as f :
+                pickle.dump([x_train_final, y_train_final], f)
+            exit()
 
 
 
