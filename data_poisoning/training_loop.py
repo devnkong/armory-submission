@@ -65,7 +65,7 @@ def Net():
     ReLU = nn.ReLU()
 
     return nn.Sequential(
-        Permute(),
+        # Permute(),
         conv1,
         conv1_bn,
         ReLU,
@@ -108,12 +108,12 @@ def robust_train(model, x_train_final, y_train_final) :
     mixing_method = dict(type='CutMix', correction=True, strength=1.0)
     num_classes = 43
 
-    setup = dict(device=torch.device('cuda'), dtype=torch.float)
+    setup = dict(device=torch.device('cuda:0'), dtype=torch.float)
 
 
     # Define optimizer, dataloader and loss_fn
     # ...
-    dataloader = torch.utils.data.DataLoader(range(len(x_train_final)), batch_size=256, shuffle=True)
+    dataloader = torch.utils.data.DataLoader(range(len(x_train_final)), batch_size=1024, shuffle=True)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     loss_fn = torch.nn.CrossEntropyLoss()
 
@@ -131,18 +131,17 @@ def robust_train(model, x_train_final, y_train_final) :
 
     # Training loop:
     for epoch in range(epochs):
+        print(epoch)
         for batch, idx in enumerate(dataloader):
             # Prep Mini-Batch
             # ...
 
             # Transfer to GPU
             # ...
-
             # Add basic data augmentation
             # ...
 
             inputs, labels = torch.tensor(x_train_final[idx]).cuda(), torch.tensor(y_train_final[idx]).cuda()
-            inputs = inputs.permute(0,3,1,2)
 
             # ###  Mixing defense ###
             if mixing_method['type'] != '':
@@ -183,7 +182,7 @@ def robust_train(model, x_train_final, y_train_final) :
             # Normal training from here on: ....
             optimizer.zero_grad()
 
-            outputs = model(inputs.permute(0,2,3,1))
+            outputs = model(inputs)
             loss, preds = criterion(outputs, labels)
             loss.backward()
 
@@ -194,7 +193,10 @@ def robust_train(model, x_train_final, y_train_final) :
 
 
 model = Net().cuda()
+# load poisoned trainset
 with open('/cmlscratch/kong/projects/armory-submission/poisoned.pkl', 'rb') as f :
     data = pickle.load(f)
 x_train_final, y_train_final = data[0], data[1]
-robust_train(model, x_train_final, y_train_final)
+model = robust_train(model, x_train_final, y_train_final)
+# save robustly trained checkpoint
+torch.save(model.state_dict(), 'gtsrb_poison.pth')

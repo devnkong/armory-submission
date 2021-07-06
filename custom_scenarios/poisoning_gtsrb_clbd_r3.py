@@ -236,6 +236,7 @@ class GTSRB_CLBD(Scenario):
             )
             x_train_final = x_train_all
             y_train_final = y_train_all
+
         if len(x_train_final):
             # logger.info(
             #     f"Fitting model of {model_config['module']}.{model_config['name']}..."
@@ -249,14 +250,17 @@ class GTSRB_CLBD(Scenario):
             #     shuffle=True,
             # )
 
+            # logger.info(
+            #     f"Saving poisoned dataset to train offline"
+            # )
+            # with open('poisoned.pkl', 'wb') as f :
+            #     pickle.dump([x_train_final, y_train_final], f)
+            # exit()
+
             logger.info(
-                f"Saving poisoned dataset to train offline"
+                f"Loaded checkpoint"
             )
-            with open('poisoned.pkl', 'wb') as f :
-                pickle.dump([x_train_final, y_train_final], f)
-            exit()
-
-
+            pass
 
         else:
             logger.warning("All data points filtered by defense. Skipping training")
