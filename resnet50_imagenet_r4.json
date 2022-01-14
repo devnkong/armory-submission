@@ -26,10 +26,10 @@
     "model": {
         "fit": false,
         "fit_kwargs": {},
-        "model_kwargs": {"pretrained": true},
-        "module": "armory.baseline_models.pytorch.resnet50",
+        "model_kwargs": {},
+        "module": "my_models.free_resnet50_r4",
         "name": "get_art_model",
-        "weights_file": null,
+        "weights_file": "MARY_free_resnet50_r4_model_best.pth.tar",
         "wrapper_kwargs": {
             "nb_classes": 10
         }
@@ -41,7 +41,10 @@
     },
     "sysconfig": {
         "docker_image": "twosixarmory/pytorch:0.14.2",
-        "external_github_repo": "davidslater/imagenette-armory",
+        "external_github_repo": [
+            "davidslater/imagenette-armory",
+            "devnkong/armory-submission@master"
+        ],
         "gpus": "all",
         "log_level": 20,
         "num_eval_batches": 10,
