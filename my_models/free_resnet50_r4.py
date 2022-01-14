@@ -25,7 +25,7 @@ class OuterModel(torch.nn.Module):
 
         if weights_path:
             checkpoint = torch.load(weights_path, map_location=DEVICE)
-            self.inner_model.load_state_dict(checkpoint)
+            self.inner_model.load_state_dict(checkpoint['state_dict'])
 
         self.imagenet_means = torch.tensor(
             [0.485, 0.456, 0.406], dtype=torch.float32, device=DEVICE
