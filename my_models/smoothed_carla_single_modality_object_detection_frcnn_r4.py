@@ -187,7 +187,7 @@ class SmoothMedianNMS(nn.Module):
 
     def forward(self, x, n=2000, batch_size=20) :
 
-        x = torch.tensor(x)
+        # x = torch.tensor(x)
         input_imgs = x.repeat((batch_size, 1, 1, 1))
         for i in range(n//batch_size):
             # Get detections
