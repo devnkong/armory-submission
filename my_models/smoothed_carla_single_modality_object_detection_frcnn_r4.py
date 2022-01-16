@@ -185,7 +185,7 @@ class SmoothMedianNMS(nn.Module):
         self.detection_acc.clear()
         return detections, detections_u, detections_l
 
-    def forward(self, x, n=2000, batch_size=20) :
+    def forward(self, x, y, n=2000, batch_size=20) :
 
         # # x = torch.tensor(x)
         # input_imgs = x.repeat((batch_size, 1, 1, 1))
@@ -201,7 +201,7 @@ class SmoothMedianNMS(nn.Module):
         # self.detection_acc.clear()
         # return detections
 
-        return self.base_detector(x)
+        return self.base_detector(x,y)
 
 # NOTE: PyTorchFasterRCNN expects numpy input, not torch.Tensor input
 def get_art_model(
@@ -219,7 +219,6 @@ def get_art_model(
         )
 
     model = models.detection.fasterrcnn_resnet50_fpn(**model_kwargs)
-    model.to(DEVICE)
 
     if weights_path:
         checkpoint = torch.load(weights_path, map_location=DEVICE)
@@ -228,6 +227,8 @@ def get_art_model(
     # q_u, q_l = estimated_qu_ql(opt.eps, opt.smooth_count, opt.sigma, conf_thres=opt.cert_conf)
     accumulator = DetectionsAcc(bin=3, sort = 1, loc_bin_count=3)
     model = SmoothMedianNMS(model, 0.25, accumulator)
+
+    model.to(DEVICE)
 
     wrapped_model = PyTorchFasterRCNN(
         model, clip_values=(0.0, 1.0), channels_first=False, **wrapper_kwargs,
