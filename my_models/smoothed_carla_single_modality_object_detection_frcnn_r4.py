@@ -6,6 +6,7 @@ from typing import Optional
 
 from art.estimators.object_detection import PyTorchFasterRCNN
 import torch
+import torch.nn as nn
 from torchvision import models
 
 logger = logging.getLogger(__name__)
