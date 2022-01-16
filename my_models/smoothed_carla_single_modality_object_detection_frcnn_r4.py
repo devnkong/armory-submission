@@ -168,7 +168,10 @@ class SmoothMedianNMS(nn.Module):
         self.sigma = sigma
         self.detection_acc = accumulator
 
-    def predict_range(self, x: torch.tensor, n: int, batch_size: int, q_u: int, q_l: int) -> (torch.tensor, torch.tensor, torch.tensor):
+    def forward(x) :
+        return self.base_detector(x)
+
+    def predict_range(self, x: torch.tensor, n: int, batch_size: int, q_u: int, q_l: int) :
 
         input_imgs = x.repeat((batch_size, 1, 1, 1))
         for i in range(n//batch_size):
@@ -185,23 +188,25 @@ class SmoothMedianNMS(nn.Module):
         self.detection_acc.clear()
         return detections, detections_u, detections_l
 
-    def forward(self, x, y, n=2000, batch_size=20) :
+    # def forward(self, x, y, n=2000, batch_size=20) :
 
-        # # x = torch.tensor(x)
-        # input_imgs = x.repeat((batch_size, 1, 1, 1))
-        # for i in range(n//batch_size):
-        #     # Get detections
-        #     with torch.no_grad():
-        #         detections = self.base_detector(input_imgs + torch.randn_like(input_imgs) * self.sigma)
-        #         # detections, _ = non_max_suppression(detections, conf_thres, nms_thres)
-        #         self.detection_acc.track(detections)
+    #     # # x = torch.tensor(x)
+    #     # input_imgs = x.repeat((batch_size, 1, 1, 1))
+    #     # for i in range(n//batch_size):
+    #     #     # Get detections
+    #     #     with torch.no_grad():
+    #     #         detections = self.base_detector(input_imgs + torch.randn_like(input_imgs) * self.sigma)
+    #     #         # detections, _ = non_max_suppression(detections, conf_thres, nms_thres)
+    #     #         self.detection_acc.track(detections)
 
-        # self.detection_acc.tensorize()
-        # detections = [self.detection_acc.median()]
-        # self.detection_acc.clear()
-        # return detections
+    #     # self.detection_acc.tensorize()
+    #     # detections = [self.detection_acc.median()]
+    #     # self.detection_acc.clear()
+    #     # return detections
 
-        return self.base_detector(x,y)
+    #     return self.base_detector(x,y)
+
+
 
 # NOTE: PyTorchFasterRCNN expects numpy input, not torch.Tensor input
 def get_art_model(
