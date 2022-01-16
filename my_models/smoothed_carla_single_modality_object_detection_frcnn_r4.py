@@ -168,8 +168,8 @@ class SmoothMedianNMS(nn.Module):
         self.sigma = sigma
         self.detection_acc = accumulator
 
-    def forward(x) :
-        return self.base_detector(x)
+    def forward(images, targets=None) :
+        return self.base_detector(images, targets)
 
     def predict_range(self, x: torch.tensor, n: int, batch_size: int, q_u: int, q_l: int) :
 
