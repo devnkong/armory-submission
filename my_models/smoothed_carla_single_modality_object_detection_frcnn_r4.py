@@ -13,6 +13,20 @@ logger = logging.getLogger(__name__)
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+class Concat(nn.Module):
+    def __init__(self):
+        super(Concat, self).__init__()
+    def forward(self, detections):
+        for detection in detections:
+            detection['scores'] = detection['scores'].to('cpu')
+            detection['boxes'] = detection['boxes'].to('cpu')
+            detection['labels'] = detection['labels'].to('cpu')
+        detections = [None if detection is None else torch.cat((detection['boxes'],
+                       detection['scores'][:, None],
+                       detection['scores'][:, None],
+                       detection['labels'].float()[:, None],),
+                      dim=1) for detection in detections]
+        return detections
 
 class DetectionsAcc:
     OBJECT_SORT=0
@@ -139,10 +153,6 @@ class DetectionsAcc:
                         idx_st = self.id_index_map[id.cpu().item()]
                         self.detections_tensor[i, idx_st:idx_st+filtered_len]= filtered_detection
 
-
-
-
-
         self.detections_tensor, _ = self.detections_tensor.sort(dim=0)
     def median(self):
         result = self.detections_tensor[len(self.detections_list) // 2]
@@ -167,6 +177,7 @@ class SmoothMedianNMS(nn.Module):
         self.base_detector = base_detector
         self.sigma = sigma
         self.detection_acc = accumulator
+        self.concator = Concat()
 
     def predict_range(self, x: torch.tensor, n: int, batch_size: int, q_u: int, q_l: int) :
 
@@ -185,26 +196,58 @@ class SmoothMedianNMS(nn.Module):
         self.detection_acc.clear()
         return detections, detections_u, detections_l
 
-    def forward_template(self, images, targets=None) :
-        return self.base_detector(images, targets)
+    # def forward(self, images, targets=None) :
+    #     out = self.base_detector(images, targets)
 
+    #     import pdb
+    #     pdb.set_trace()
+
+    #     return out
 
     def forward(self, images, targets=None) :
-        n, batch_size = 2000, 20
 
+        assert len(images) == 1, 'The code only supports batch size to be 1'
+
+        # n, batch_size = 2000, 20
+        n, batch_size = 20, 4
+
+        x = images[0]
         input_imgs = x.repeat((batch_size, 1, 1, 1))
+        if targets :
+            targets = targets * batch_size
 
         for i in range(n//batch_size):
             # Get detections
-            with torch.no_grad():
-                detections = self.base_detector(input_imgs + torch.randn_like(input_imgs) * self.sigma, targets)
-                # detections, _ = non_max_suppression(detections, conf_thres, nms_thres)
-                self.detection_acc.track(detections)
+            detections = self.base_detector(input_imgs + torch.randn_like(input_imgs) * self.sigma, targets)
+
+            detections = self.concator(detections)
+            # with torch.no_grad():
+            # if targets :
+            #     detections = self.base_detector(input_imgs + torch.randn_like(input_imgs) * self.sigma, targets)
+            # else :
+            #     detections = self.base_detector(input_imgs + torch.randn_like(input_imgs) * self.sigma)
+
+            # detections, _ = non_max_suppression(detections, conf_thres=0.8, nms_thres=0.4)
+            self.detection_acc.track(detections)
 
         self.detection_acc.tensorize()
         detections = [self.detection_acc.median()]
         self.detection_acc.clear()
-        return detections
+
+        boxes = detections[0][:, :4]
+        labels = detections[0][:, -1].long()
+        scores = detections[0][:, 4]
+        
+        selector = ~torch.tensor([float('inf') in box for box in boxes], dtype=torch.bool)
+        boxes, labels, scores = boxes[selector], labels[selector], scores[selector]
+
+        detections = {
+            'boxes': boxes,
+            'labels': labels,
+            'scores': scores
+        }
+
+        return [detections]
 
 
 
@@ -229,9 +272,11 @@ def get_art_model(
         checkpoint = torch.load(weights_path, map_location=DEVICE)
         model.load_state_dict(checkpoint)
 
+    # model = torch.nn.Sequential(model, Concat())
+
     # q_u, q_l = estimated_qu_ql(opt.eps, opt.smooth_count, opt.sigma, conf_thres=opt.cert_conf)
     accumulator = DetectionsAcc(bin=3, sort = 1, loc_bin_count=3)
-    model = SmoothMedianNMS(model, 0.25, accumulator)
+    model = SmoothMedianNMS(model, 0.1, accumulator)
 
     model.to(DEVICE)
 
