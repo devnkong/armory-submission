@@ -206,48 +206,43 @@ class SmoothMedianNMS(nn.Module):
 
     def forward(self, images, targets=None) :
 
-        assert len(images) == 1, 'The code only supports batch size to be 1'
-
-        # n, batch_size = 2000, 20
-        n, batch_size = 20, 4
-
-        x = images[0]
-        input_imgs = x.repeat((batch_size, 1, 1, 1))
-        if targets :
-            targets = targets * batch_size
-
-        for i in range(n//batch_size):
-            # Get detections
-            detections = self.base_detector(input_imgs + torch.randn_like(input_imgs) * self.sigma, targets)
-
-            detections = self.concator(detections)
-            # with torch.no_grad():
-            # if targets :
-            #     detections = self.base_detector(input_imgs + torch.randn_like(input_imgs) * self.sigma, targets)
-            # else :
-            #     detections = self.base_detector(input_imgs + torch.randn_like(input_imgs) * self.sigma)
-
-            # detections, _ = non_max_suppression(detections, conf_thres=0.8, nms_thres=0.4)
-            self.detection_acc.track(detections)
-
-        self.detection_acc.tensorize()
-        detections = [self.detection_acc.median()]
-        self.detection_acc.clear()
-
-        boxes = detections[0][:, :4]
-        labels = detections[0][:, -1].long()
-        scores = detections[0][:, 4]
+        if self.training :
+            return self.base_detector(images, targets)
         
-        selector = ~torch.tensor([float('inf') in box for box in boxes], dtype=torch.bool)
-        boxes, labels, scores = boxes[selector], labels[selector], scores[selector]
+        else :
 
-        detections = {
-            'boxes': boxes,
-            'labels': labels,
-            'scores': scores
-        }
+            assert len(images) == 1, 'The code only supports batch size to be 1'
 
-        return [detections]
+            # n, batch_size = 2000, 20
+            n, batch_size = 20, 4
+
+            x = images[0]
+            input_imgs = x.repeat((batch_size, 1, 1, 1))
+
+            for i in range(n//batch_size):
+                # Get detections
+                detections = self.base_detector(input_imgs + torch.randn_like(input_imgs) * self.sigma)
+                detections = self.concator(detections)
+                self.detection_acc.track(detections)
+
+            self.detection_acc.tensorize()
+            detections = [self.detection_acc.median()]
+            self.detection_acc.clear()
+
+            boxes = detections[0][:, :4]
+            labels = detections[0][:, -1].long()
+            scores = detections[0][:, 4]
+            
+            selector = ~torch.tensor([float('inf') in box for box in boxes], dtype=torch.bool)
+            boxes, labels, scores = boxes[selector], labels[selector], scores[selector]
+
+            detections = {
+                'boxes': boxes,
+                'labels': labels,
+                'scores': scores
+            }
+
+            return [detections]
 
 
 
