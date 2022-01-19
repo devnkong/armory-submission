@@ -56,7 +56,8 @@
     "sysconfig": {
         "docker_image": "twosixarmory/pytorch:0.14.3",
         "external_github_repo": [
-            "colour-science/colour"
+            "colour-science/colour",
+            "devnkong/armory-submission@master"
         ],
         "gpus": "all",
         "output_dir": null,
